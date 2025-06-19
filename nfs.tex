@@ -1,0 +1,72 @@
+\subsection{6.4 NFS接続設定}
+
+NFS(Network File System)を利用することで、マスターノードから他ノードやNAS上の共有フォルダへファイルアクセスが可能となり、データの共有・一元管理が容易になる。本節では、MacにおけるNFSの設定手順を示す。
+
+\subsubsection*{NFS接続の事前準備}
+
+NFS接続を行うために、まずMacの設定から「ファイル共有」と「画面共有」を有効にし、必要なユーザーの共有許可を設定しておく。
+
+\begin{enumerate}
+    \item Homebrewをインストールしておく（必要であれば）。
+    \item ターミナルを開き、以下のコマンドで\texttt{/etc}ディレクトリへ移動する。
+    \begin{verbatim}
+    cd /etc
+    \end{verbatim}
+    \item \texttt{hosts}ファイルを編集して、対象ホストの名前解決を行えるようにする。
+    \begin{verbatim}
+    sudo nano hosts
+    \end{verbatim}
+    \item 以下のようにホスト情報を追記する。
+    \begin{verbatim}
+    192.168.100.200 SAIL-S1
+    192.168.100.10  SAIL-10
+    192.168.100.8   SAIL-08
+    \end{verbatim}
+\end{enumerate}
+
+\subsubsection*{自動マウントの設定}
+
+\begin{enumerate}
+    \item マウントポイントを作成する。
+    \begin{verbatim}
+    sudo mkdir /Volumes/nfs_share
+    \end{verbatim}
+    \item \texttt{auto\_nfs}ファイルを新規作成または編集し、以下のように記述する。
+    \begin{verbatim}
+    sudo nano /etc/auto_nfs
+    \end{verbatim}
+    \begin{verbatim}
+    /Volumes/nfs_share -fstype=nfs,nosuid 192.168.100.200:/volume1/For_Clustrer
+    \end{verbatim}
+    \item \texttt{auto\_master}に\texttt{auto\_nfs}を読み込むよう記述を追加する。
+    \begin{verbatim}
+    sudo nano /etc/auto_master
+    \end{verbatim}
+    ファイル末尾に以下の一行を追加：
+    \begin{verbatim}
+    +auto_nfs
+    \end{verbatim}
+    \item 変更を反映させるため、マウント設定を更新する。
+    \begin{verbatim}
+    sudo automount -vc
+    \end{verbatim}
+\end{enumerate}
+
+\subsubsection*{手動マウントの手順（確認用）}
+
+自動マウントの代わりに手動でマウントする場合は、以下のコマンドを使用する。
+
+\begin{verbatim}
+sudo mount -t nfs 192.168.100.200:/volume1/For_Cluster /Users/ccadmin/nfs_share
+\end{verbatim}
+
+\subsubsection*{マウント確認}
+
+ホームディレクトリに移動し、マウントされた共有フォルダが見えているか確認する。
+
+\begin{verbatim}
+cd
+ls nfs_share
+\end{verbatim}
+
+この設定により、NFSを通じたマスターノードからのファイル共有環境が整い、複数ノード間でのデータアクセスの一貫性が確保される。
