@@ -45,9 +45,13 @@
 ### ▶️ 内容
 - `desc1` (M×128), `desc2` (N×128) を行列A, Bとみなす
 - 次のように距離の2乗を計算：
-  - $$
-    \|a_i - b_j\|^2 = \|a_i\|^2 + \|b_j\|^2 - 2 a_i \cdot b_j
-    $$
+
+  <p align="center">
+  <strong>
+  ‖a<sub>i</sub> − b<sub>j</sub>‖² = ‖a<sub>i</sub>‖² + ‖b<sub>j</sub>‖² − 2 a<sub>i</sub> · b<sub>j</sub>
+  </strong>
+  </p>
+
 - 行列積やベクトル演算として計算（OpenCL BLAS的手法）
 
 ### ✅ 利点
